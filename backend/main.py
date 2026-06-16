@@ -12,6 +12,7 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -23,7 +24,7 @@ app.add_middleware(
 
 @app.get("/")
 def main_page():
-    pass
+    return {"status": "ok"}
 
 
 @app.get("/films" , response_model=list[schemas.GetFilm])
@@ -32,7 +33,7 @@ def get_all_films(db: Session = Depends(get_db)):
 
 
 @app.get("/films/{item_id}", response_model=schemas.GetFilm) 
-def det_film(item_id: int, db: Session = Depends(get_db)):
+def get_film(item_id: int, db: Session = Depends(get_db)):
     
     film = (
         db.query(models.Film)
@@ -44,16 +45,16 @@ def det_film(item_id: int, db: Session = Depends(get_db)):
     return film
 
 
-@app.get("/search" , response_model=list[schemas.GetFilm])
+@app.get("/films/search" , response_model=list[schemas.GetFilm])
 def search_film(text: str , limit: int = 15, db: Session = Depends(get_db)):
     films = (
         db.query(models.Film)
         .filter(
             or_(
                 
-                models.Film.name.ilike(f"%{text}"),
+                models.Film.name.ilike(f"%{text}%"),
 
-                models.Film.genre.ilike(f"%{text}")
+                models.Film.genre.ilike(f"%{text}%")
 
             )
 
