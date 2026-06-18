@@ -8,11 +8,14 @@ async function loadFilms() {
 
         const films = await response.json();
 
+    
         const container = document.getElementById('films-container');
         container.innerHTML = '';
 
         films.forEach(film => {
             const card = document.createElement('div');
+
+            card.className = 'film-card';
             card.innerHTML = `
                 <h3>${film.name}</h3>
                 <h4>${film.genre}</h4> 
@@ -94,7 +97,7 @@ async function searchFilms(text) {
 
     try {
 
-        const response = await fetch(`http://127.0.0.1:8000/films/search?text=${encodeURIComponent(text)}`);
+        const response = await fetch(`http://127.0.0.1:8000/search?text=${encodeURIComponent(text)}`);
         const films = await response.json();
 
         const container = document.getElementById('films-container');
@@ -108,6 +111,8 @@ async function searchFilms(text) {
 
         films.forEach(film => {
             const card = document.createElement('div');
+
+            card.className = 'film-card';
             card.innerHTML = `
                 <h3>${film.name}</h3>
                 <h4>${film.genre}</h4>
@@ -126,8 +131,52 @@ async function searchFilms(text) {
 
 
 
+document.addEventListener('DOMContentLoaded', () => {
+    
+    const movieForm = document.getElementById('add-movie-form');
+
+    if (movieForm) {
+        movieForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const name = document.getElementById('form-name').value;
+            const genre = document.getElementById('form-genre').value;
+            const rating = parseFloat(document.getElementById('form-rating').value);
+            const description = document.getElementById('form-description').value;
 
 
+            console.log("Отправляем на FastAPI:", { name ,genre , rating , description});
+            const result = await createFilm(name ,genre , rating , description);
+            
+            if (result) {
+                console.log("Фильм добавлен в базу данных")
+                movieForm.reset();
+                await loadFilms();
+            }
+
+        });
+    }
+
+    const searchInput = document.getElementById('search-input');
+    let searchTimeout;
+
+    if (searchInput) {
+        searchInput.addEventListener('input', (event) => {
+            const text = event.target.value;
+
+            clearTimeout(searchTimeout);
+        
+        
+            searchTimeout = setTimeout(async () => {
+                if (text.trim() === '') {
+                    await loadFilms();
+                } else {
+                    await searchFilms(text);
+                }
+        }, 500); 
+    });
+}
 
 
+});
 

@@ -45,7 +45,7 @@ def get_film(item_id: int, db: Session = Depends(get_db)):
     return film
 
 
-@app.get("/films/search" , response_model=list[schemas.GetFilm])
+@app.get("/search" , response_model=list[schemas.GetFilm])
 def search_film(text: str , limit: int = 15, db: Session = Depends(get_db)):
     films = (
         db.query(models.Film)
@@ -77,6 +77,7 @@ def create_film(film: schemas.AddFilm, db: Session = Depends(get_db)):
     db.refresh(db_film)
 
     return db_film
+
 
 @app.put("/films/{item_id}" , response_model=schemas.GetFilm)
 def update_film(item_id: int, film: schemas.AddFilm, db: Session = Depends(get_db)):
