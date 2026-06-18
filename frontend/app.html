@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Movie Review Platform</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>Movie Review Platform</h1>
+
+    <div>
+        <input type="text" id="search-input" placeholder="Поиск фильма">
+    </div>
+
+    <form id="add-movie-form">
+        <input type="text" id="form-name" placeholder="Название">
+        <input type="text" id="form-genre" placeholder="Жанр">
+        <input type="number" id="form-rating" step="0.1" placeholder="Рейтинг">
+        <textarea id="form-description" placeholder="Описание"></textarea>
+        
+        <button type="submit">Добавить фильм</button>
+    </form>
+
+    <div id="films-container"></div>
+
+    <script src="app.js"></script>
+
+</body>
+</html>

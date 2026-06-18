@@ -1,38 +1,61 @@
 
 async function loadFilms() {
-
     try {
-
         const response = await fetch(`http://127.0.0.1:8000/films`);
-
-
         const films = await response.json();
-
-    
         const container = document.getElementById('films-container');
         container.innerHTML = '';
 
         films.forEach(film => {
             const card = document.createElement('div');
-
             card.className = 'film-card';
+
             card.innerHTML = `
                 <h3>${film.name}</h3>
                 <h4>${film.genre}</h4> 
                 <p>Rating: ${film.rating}</p> 
                 <p>${film.description || 'No description'}</p>          
+                
+                <div class="card-actions">
+                    <button class="edit-btn" data-id="${film.id}">Редактировать</button>
+                    <button class="delete-btn" data-id="${film.id}" style="background-color: #dc3545;">Удалить</button>
+                </div>
             `;
+            const deleteBtn = card.querySelector('.delete-btn');
+            deleteBtn.addEventListener('click', async () => {
+                if (confirm(`Вы уверены, что хотите удалить фильм "${film.name}"?`)) {
+                    await deleteFilm(film.id); 
+                    await loadFilms();        
+                }
+            });
+            
+            const editBtn = card.querySelector('.edit-btn');
+            editBtn.addEventListener('click', async () => {
+                
+                const newName = prompt("Введите новое название:", film.name);
+                const newGenre = prompt("Введите новый жанр:", film.genre);
+                const newRating = prompt("Введите новый рейтинг:", film.rating);
+                const newDescription = prompt("Введите новое описание:", film.description);
+                
+                if (newName && newGenre && newRating) {
+                    const updatedData = {
+                        name: newName,
+                        genre: newGenre,
+                        rating: parseFloat(newRating),
+                        description: newDescription
+                    };
+
+                    await updateFilm(film.id, updatedData); 
+                    await loadFilms();                      
+                }
+            });
             container.appendChild(card);
         });
-
-
     }   
     catch (error) {
         console.log("Error:", error);
-    
     }
-}   
-
+}
 window.onload = loadFilms;
 
 
